@@ -1,0 +1,289 @@
+﻿<Window x:Class="ComputerLevel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ComputerLevel"
+        xmlns:convert="clr-namespace:ComputerLevel.Converts"
+        mc:Ignorable="d" WindowStyle="ToolWindow"
+        Title="计算机四级等级考试--数据库四级 By 0xdF" Height="610" Width="700" ResizeMode="NoResize">
+    <Window.Resources>
+        <!--右侧浮动框-->
+        <Storyboard x:Key="QuestionListDisplayAnimation">
+            <DoubleAnimation Duration="0:0:0.3" To="0" 
+                             Storyboard.TargetName="OpenAnimation"
+                             Storyboard.TargetProperty="X"/>
+        </Storyboard>
+        <Storyboard x:Key="QuestionListHiddenAnimation">
+            <DoubleAnimation Duration="0:0:0.3" To="200" 
+                             Storyboard.TargetName="OpenAnimation"
+                             Storyboard.TargetProperty="X"/>
+        </Storyboard>
+        <!--左侧浮动框-->
+        <Storyboard x:Key="QuestionLeftHiddenAnimation">
+            <DoubleAnimation Duration="0:0:0.3" To="0" 
+                             Storyboard.TargetName="OpenLeftAnimation"
+                             Storyboard.TargetProperty="X"/>
+        </Storyboard>
+        <Storyboard x:Key="QuestionLeftDisplayAnimation">
+            <DoubleAnimation Duration="0:0:0.3" To="200" 
+                             Storyboard.TargetName="OpenLeftAnimation"
+                             Storyboard.TargetProperty="X"/>
+        </Storyboard>
+        <convert:HiddenRadioOrCheckBox x:Key="visibleConvert"/>
+    </Window.Resources>
+    <Window.Triggers>
+        <!--右侧浮动框 绑定按钮点击触发器-->
+        <EventTrigger RoutedEvent="Button.Click" SourceName="QuestionListButton">
+            <BeginStoryboard Storyboard="{StaticResource QuestionListDisplayAnimation}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Button.Click" SourceName="QuestionListHiddenButton">
+            <BeginStoryboard Storyboard="{StaticResource QuestionListHiddenAnimation}"/>
+        </EventTrigger>
+        <!--左侧浮动框 绑定按钮点击触发器-->
+        <EventTrigger RoutedEvent="Button.Click" SourceName="QuestionsHiddenButton">
+            <BeginStoryboard Storyboard="{StaticResource QuestionLeftHiddenAnimation}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Button.Click" SourceName="QuestionLeftDisplayButton">
+            <BeginStoryboard Storyboard="{StaticResource QuestionLeftDisplayAnimation}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="450"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="0 0 10 0">
+                <Grid  HorizontalAlignment="Right" 
+              VerticalAlignment="Center" Width="30" Height="30">
+                    <Button Background="Transparent" BorderBrush="Transparent" x:Name="QuestionListButton">
+                        <Path Data="M0 0 20 0M0 5 20 5M0 10 20 10" Stroke="Black" StrokeThickness="1"></Path>
+                    </Button>
+                </Grid>
+                <Grid  HorizontalAlignment="Left" VerticalAlignment="Center" Width="30" Height="30">
+                    <Button Background="Transparent" BorderBrush="Transparent" x:Name="QuestionLeftDisplayButton">
+                        <Path Data="M0 0 20 0M0 5 20 5M0 10 20 10" Stroke="Black" StrokeThickness="1"></Path>
+                    </Button>
+                </Grid>
+            </Grid>
+            <Grid Height="450" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid Margin="10 0 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="200"/>
+                        <RowDefinition Height="220"/>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer  MaxHeight="150" Margin="0 0 0 10">
+                        <TextBlock Height="90" Grid.Row="0" FontSize="17" Foreground="RoyalBlue" Width="550" TextWrapping="Wrap">
+                                <Run Text="{Binding Question.id}"/> 
+                                <Run Text="、"/> 
+                                <Run Text="{Binding Question.question}"/>
+                        </TextBlock>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="1"  Name="RadioQuestion" Visibility="{Binding Question.options.E,Converter={StaticResource visibleConvert}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton  Height="80"  Width="600" Grid.Row="0" FontSize="15" Name="Radio_OptionA">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.A}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton  Height="80"  Width="600" Grid.Row="1" FontSize="15"  Name="Radio_OptionB">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.B}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Height="80"   Width="600" Grid.Row="2" FontSize="15"  Name="Radio_OptionC">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.C}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton  Width="600" Height="80" Grid.Row="3" FontSize="15"  Name="Radio_OptionD">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.D}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </RadioButton>
+                      
+                        <!-- 以下内容 是当绑定按钮的内容为空时隐藏该单选按钮 
+                         <RadioButton  Width="600" Height="80" Grid.Row="4" FontSize="15"  Name="Radio_OptionE">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.E}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                            <RadioButton.Style>
+                                <Style TargetType="RadioButton">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding  Question.options.E}" Value="">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </RadioButton.Style>
+                        </RadioButton>
+                        -->
+                    </Grid>
+
+                    <Grid Grid.Row="1" Name="CheckBoxQuestion">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox  Height="80"  Width="600" Grid.Row="0" FontSize="15" Name="CheckBox_OptionA">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.A}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox  Height="80"  Width="600" Grid.Row="1" FontSize="15"  Name="CheckBox_OptionB">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.B}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox Height="80"   Width="600" Grid.Row="2" FontSize="15"  Name="CheckBox_OptionC">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.C}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox  Width="600" Height="80" Grid.Row="3" FontSize="15"  Name="CheckBox_OptionD">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.D}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox  Width="600" Height="80" Grid.Row="4" FontSize="15"  Name="CheckBox_OptionE">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Question.options.E}" TextWrapping="WrapWithOverflow"></TextBlock>
+                            </StackPanel>
+                        </CheckBox>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding  Question.options.E}" Value="">
+                                        <Setter Property="Visibility" Value="Hidden"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                    </Grid>
+
+
+
+                    <Grid Grid.Row="2" Margin="0,20,0,-55">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="300"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid  HorizontalAlignment="Center" Grid.Row="0">
+                            <Button Content="上一题" Height="30" Width="50"
+                                Foreground="Black" Margin="-120 0 0 0"
+                                Command="{Binding FrontQuestionCommand}" CommandParameter="{Binding Question.id}"/>
+                            <Button Content="提交" Height="30" Width="50" Foreground="Black" Click="Button_Click_CommitMyAnswer"/>
+                            <Button Content="下一题" Height="30" 
+                            Width="50" Foreground="Black" Margin="120 0 0 0"
+                            Command="{Binding NextQuestionCommand}" CommandParameter="{Binding Question.id}"/>
+                        </Grid>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" Grid.Row="1" Height="300">
+                            <TextBlock Text="" Margin="10 0 0 0" x:Name="AnalysisText" 
+                                           Visibility="Visible" FontSize="18"
+                                           TextWrapping="WrapWithOverflow" Height="400"/>
+                        </ScrollViewer>
+                    </Grid>
+
+
+                </Grid>
+
+            </Grid>
+
+        </Grid>
+        <!--右侧悬浮-->
+        <Border Background="#EE444444" Width="200"  Height="600" Margin="500 0 0 0">
+            <Border.RenderTransform>
+                <TranslateTransform X="200" x:Name="OpenAnimation"/>
+            </Border.RenderTransform>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="150"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="60"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="150"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="60"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Button Background="Transparent" BorderBrush="Transparent" x:Name="QuestionListHiddenButton" 
+                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 10 20 0">
+                        <Path Data="M0 0 20 20M20 0 0 20" Stroke="White" StrokeThickness="3"></Path>
+                    </Button>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <TextBlock Text=" 操作系统（单选）" Foreground="White" FontSize="15"/>
+                </Grid>
+                <Grid Grid.Row="2" Margin="10 10 20 10" >
+                    <UniformGrid Columns="5" Grid.Row="4" Name="QuestionBox">
+
+                    </UniformGrid>
+                </Grid>
+                <Grid Grid.Row="3">
+                    <TextBlock Text=" 操作系统（多选）" Foreground="White" FontSize="15"/>
+                </Grid>
+                <Grid Grid.Row="4" Margin="10 10 20 10" >
+                    <UniformGrid Columns="5" Grid.Row="2" Name="QuestionCheckBox">
+
+                    </UniformGrid>
+                </Grid>
+                <Grid Grid.Row="5">
+                    <TextBlock Text=" 数据库（单选）" Foreground="White" FontSize="15"/>
+                </Grid>
+                <Grid Grid.Row="6" Margin="10 10 20 10" >
+                    <UniformGrid Columns="5" Grid.Row="4" Name="DataBaseQuestionBox">
+
+                    </UniformGrid>
+                </Grid>
+                <Grid Grid.Row="7">
+                    <TextBlock Text=" 数据库（多选）" Foreground="White" FontSize="15"/>
+                </Grid>
+                <Grid Grid.Row="8" Margin="10 10 20 10" >
+                    <UniformGrid Columns="5" Rows="2" Name="DataBaseQuestionCheckBox">
+
+                    </UniformGrid>
+                </Grid>
+            </Grid>
+        </Border>
+        <!--左侧悬浮-->
+        <Border Background="#EE444444" Width="200"  Height="600" Margin="-885 0 0 0">
+            <Border.RenderTransform>
+                <TranslateTransform X="200" x:Name="OpenLeftAnimation"/>
+            </Border.RenderTransform>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" VerticalAlignment="Center">
+                    <TextBlock Text="题库列表" Foreground="White" FontSize="16"/>
+                    <Button Background="Transparent" BorderBrush="Transparent" x:Name="QuestionsHiddenButton" 
+                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 10 20 0">
+                        <Path Data="M0 0 20 20M20 0 0 20" Stroke="White" StrokeThickness="3"></Path>
+                    </Button>
+                </Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Height="500">
+                    <UniformGrid Rows="30" Name="QuestionBankList">
+
+                    </UniformGrid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+
+
+</Window>
